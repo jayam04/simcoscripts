@@ -1,0 +1,13 @@
+[
+  "automation!+",
+  {
+    "id": "embox",
+    "name": "embox",
+    "type": "resource sync",
+    "path": "../data/embox/resource.json",
+    "sheet_id": "12vGQGLtSCsaMo-nj8N6sGRqzgAX81091tNdAXW7Uz5Y",
+    "worksheet_id": "warehouse",
+    "column_start": "C",
+    "row_start": 2
+  }
+]
