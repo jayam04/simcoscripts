@@ -8,7 +8,7 @@ from googleapiclient.errors import HttpError
 from google.oauth2.service_account import Credentials
 
 
-credentials_path = "../secrets/simcoscripts-626ed5ba69d0.json"
+credentials_path = "../secrets/simcoscripts-f5d853cce669.json"
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets',
           'https://www.googleapis.com/auth/drive']
 
@@ -64,6 +64,7 @@ def batch_update_values(spreadsheet_id, range_name,
         result = service.spreadsheets().values().batchUpdate(
             spreadsheetId=spreadsheet_id, body=body).execute()
         print(f"{(result.get('totalUpdatedCells'))} cells updated.")
+        print("dome")
         return result
     except HttpError as error:
         print(f"An error occurred: {error}")

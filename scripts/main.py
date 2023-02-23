@@ -7,7 +7,7 @@ from googleapiclient.discovery import build
 import quantity as quantity
 import cloud_functions as cf
 
-credentials_path = "../secrets/simcoscripts-626ed5ba69d0.json"
+credentials_path = "../secrets/simcoscripts-f5d853cce669.json"
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets',
           'https://www.googleapis.com/auth/drive']
 
