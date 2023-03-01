@@ -1,10 +1,15 @@
 import json
 
 
+total_items = 140
 
 def get_current_stock(filepath):
+    # takes filepath relative to main file
+    # returns 1 * n 2D array with nth place holding product
+    # of db_letter n
+
     print('fetching current stocks ...')
-    current_stock = [[0] for i in range(200)]
+    current_stock = [[0] for i in range(total_items)]
     with open(filepath) as file:
         stock = json.load(file)
 

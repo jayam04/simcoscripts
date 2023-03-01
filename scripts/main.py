@@ -6,10 +6,14 @@ from googleapiclient.discovery import build
 
 import quantity as quantity
 import cloud_functions as cf
+from dev_tools import devprint, start_dev_mode
 
 credentials_path = "../secrets/simcoscripts-f5d853cce669.json"
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets',
           'https://www.googleapis.com/auth/drive']
+automation_path = "../automations/"
+data_folder = "../data/"
+devMode = True
 
 
 def get_automations(filepath):
@@ -26,13 +30,13 @@ def get_automations(filepath):
 def get_automation_data(filepath):
     with open(filepath) as file:
         data = json.load(file)
-    if data[0] in ["automation!+", "!default"]:
-        return data[1], data[0]
+        if data:
+            return data
     return None
 
 
-def sync_resources(attributes, root_path):
-    resources = quantity.get_current_stock(root_path + attributes['path'])
+def sync_resources(file_data, sheet_data):
+    resources = quantity.get_current_stock(automation_path + file_data["path"])
 
     creds = None
     if os.path.exists(credentials_path):
@@ -42,12 +46,12 @@ def sync_resources(attributes, root_path):
         return 1
 
     body = {"values": resources}
-    range_name = "warehouse!" + attributes["column_start"] + str(attributes["row_start"]) + ":" + attributes[
-        "column_start"] + str(attributes["row_start"] + 200)
+    range_name = "warehouse!" + sheet_data["column_start"] + str(sheet_data["row_start"]) + ":" + sheet_data[
+        "column_start"] + str(sheet_data["row_start"] + 200)
     # range_name = "warehouse!B1:B200"
     print(range_name)
 
-    cf.batch_update_values(attributes["sheet_id"], range_name, resources)
+    cf.batch_update_values(sheet_data["id"], range_name, resources)
 
     # service = build('sheets', 'v4', credentials=creds)
     # result = service.spreadsheets().values().update(
@@ -56,22 +60,73 @@ def sync_resources(attributes, root_path):
     # print(f"{result.get('updatedCells')} cells updated.")
 
 
-def main():
-    automations = get_automations("../automations/")
-
-    for automation in automations:
-        values, automation_type = get_automation_data(automation)
-        print(values)
-        if not values:
-            continue
-        if automation_type == "automation!+":
-            if values["type"] == "resource sync":
-                sync_resources(values, "../automations/")
-
-        elif automation_type == "!default":
-            pass
+def get_credentials():
     pass
 
 
+def get_sheet_upload_data(upload_values, sheet_attributes):
+    # takes all automation data
+    # return sheet_update data block
+    cs = sheet_attributes["column_start"]
+    rs_int = sheet_attributes["row_start"]
+    sheet_range = cs + str(rs_int) + ":" + chr(ord(cs) + len(upload_values[0]) - 1) + str(rs_int + len(upload_values) - 1)
+
+    return {
+        'range': sheet_range,  # sheet range ie. A1:B3
+        'values': upload_values  # 2D sheet data array
+    }
+
+
+
+    return upload_data
+
+
+def get_from_json(filepath):
+    with open(filepath) as file:
+        data = json.load(file)
+    return data
+
+
+def get_sync_data(automation_data):
+    # takes automation data and
+    # return 2D array of data to sync
+
+    match automation_data["type"]:
+        case "warehouse sync":
+            return [[]]
+            pass
+        case "resource name":
+            return get_from_json(data_folder + "defaults/resource_name.json")
+    return [[]]
+
+
+def main():
+    # credentials
+    creds = get_credentials()
+    devprint("got credentials!", "checkpoint")
+
+    # automations
+    automation_files = get_automations("../automations/")
+    devprint("got automation files!", "checkpoint")
+
+    for automation_file in automation_files:
+
+        #  get basic data
+        automation_data = get_automation_data(automation_file)
+        sheet_upload_data = []
+
+        sub_automations = [sub for sub in automation_data["sub_automations"]]
+        for sub_automation in sub_automations:
+            sync_data = get_sync_data(sub_automation)
+            sheet_upload_data.append(get_sheet_upload_data(sync_data, sub_automation["sheet"]))
+
+        print(automation_data)
+        if automation_data["type"] == "resource sync":
+            sync_resources(automation_data["file"], automation_data["sheet"])
+        if automation_data["type"] == "resource name":
+            sync_resources(automation_data["file"], automation_data["sheet"])
+
+
 if __name__ == "__main__":
+    start_dev_mode()
     main()

@@ -13,18 +13,14 @@ SCOPES = ['https://www.googleapis.com/auth/spreadsheets',
           'https://www.googleapis.com/auth/drive']
 
 
-def sync_sheet(sheet_id, worksheet_range, data):
-    creds = None
-    if os.path.exists(credentials_path):
-        creds = Credentials.from_service_account_file(credentials_path, scopes=SCOPES)
-        print("got credentials!")
-    else:
-        return 1
+def sync_sheet(sheet_data, data, creds):
+    if not creds:
+        raise ValueError("got empty credentials!!")
+
+    batch_update_values(sheet_data)
 
 
-
-
-def batch_update_values(spreadsheet_id, range_name,
+def batch_update_values(sheet_data, range_name,
                         _values, value_input_option="USER_ENTERED"):
     """
         Creates the batch_update the user has access to.
@@ -32,9 +28,13 @@ def batch_update_values(spreadsheet_id, range_name,
         TODO(developer) - See https://developers.google.com/identity
         for guides on implementing OAuth2 for the application.
             """
+
+    spreadsheet_id = sheet_data["id"],
+
     creds = None
     if os.path.exists(credentials_path):
-        creds = Credentials.from_service_account_file(credentials_path, scopes=SCOPES)
+        creds = Credentials.from_service_account_file(
+            credentials_path, scopes=SCOPES)
         print("got credentials!")
     else:
         return 1
@@ -42,20 +42,11 @@ def batch_update_values(spreadsheet_id, range_name,
     try:
         service = build('sheets', 'v4', credentials=creds)
 
-        # values = [
-        #     [
-        #         0
-        #     ],
-        #     [
-        #         2
-        #     ],
-        # ]
         data = [
             {
                 'range': range_name,
                 'values': _values
             },
-            # Additional ranges to update ...
         ]
         body = {
             'valueInputOption': value_input_option,
@@ -72,10 +63,11 @@ def batch_update_values(spreadsheet_id, range_name,
 
 
 if __name__ == '__main__':
+    pass
     # Pass: spreadsheet_id, range_name value_input_option and _values)
-    batch_update_values("12vGQGLtSCsaMo-nj8N6sGRqzgAX81091tNdAXW7Uz5Y",
-                        "A1:C2", "USER_ENTERED",
-                        [
-                            ['F', 'B'],
-                            ['C', 'D']
-                        ])
+    # batch_update_values("12vGQGLtSCsaMo-nj8N6sGRqzgAX81091tNdAXW7Uz5Y",
+    #                     "A1:C2", "USER_ENTERED",
+    #                     [
+    #                         ['F', 'B'],
+    #                         ['C', 'D']
+    #                     ])

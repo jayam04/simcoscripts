@@ -1,14 +1,14 @@
-[
-  "!default",
-  {
+{
     "id": "equinox",
-        "name": "equinox",
+    "name": "equinox",
+    "sheet_id": "12vGQGLtSCsaMo-nj8N6sGRqzgAX81091tNdAXW7Uz5Y",
 
+    "equinox_0": {
         "type": "resource name",
-
-        "sheet_id": "12vGQGLtSCsaMo-nj8N6sGRqzgAX81091tNdAXW7Uz5Y",
-        "worksheet_id": "warehouse",
-        "column_start": "B",
-        "row_start": 2
-  }
-]
+        "sheet": {
+            "worksheet": "warehouse",
+            "column_start": "B",
+            "row_start": 2
+        }
+    }
+}
