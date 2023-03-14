@@ -12,4 +12,4 @@ a complete bundle of scripts that can sync your data from [simcompanies](https:/
 - [ ] change script to get google api credentials from cli  
 - [ ] documentation for code structure
 - [ ] wiki for how to use
-- [ ] license
+- [x] license

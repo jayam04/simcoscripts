@@ -11,10 +11,10 @@ color = {
 def start_dev_mode():
     global dev_mode
     dev_mode = True
-    devprint("started devmode!", "info")
+    dev_print("started devmode!", "info")
 
 
-def devprint(string, info_type=None):
+def dev_print(string, info_type=None):
     global dev_mode
     if not dev_mode:
         return 0

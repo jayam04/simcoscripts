@@ -3,17 +3,18 @@ import json
 
 from google.oauth2.service_account import Credentials
 from googleapiclient.discovery import build
+from cloud_functions import batch_update_values
 
 import quantity as quantity
 import cloud_functions as cf
-from dev_tools import devprint, start_dev_mode
+from dev_tools import dev_print, start_dev_mode
+import sys
 
-credentials_path = "../secrets/simcoscripts-f5d853cce669.json"
+credentials_path = "../secrets/simcoscripts-dfb9b2048a6e.json"
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets',
           'https://www.googleapis.com/auth/drive']
 automation_path = "../automations/"
 data_folder = "../data/"
-devMode = True
 
 
 def get_automations(filepath):
@@ -61,7 +62,7 @@ def sync_resources(file_data, sheet_data):
 
 
 def get_credentials():
-    pass
+    return Credentials.from_service_account_file(credentials_path)
 
 
 def get_sheet_upload_data(upload_values, sheet_attributes):
@@ -75,10 +76,6 @@ def get_sheet_upload_data(upload_values, sheet_attributes):
         'range': sheet_range,  # sheet range ie. A1:B3
         'values': upload_values  # 2D sheet data array
     }
-
-
-
-    return upload_data
 
 
 def get_from_json(filepath):
@@ -103,11 +100,11 @@ def get_sync_data(automation_data):
 def main():
     # credentials
     creds = get_credentials()
-    devprint("got credentials!", "checkpoint")
+    dev_print("got credentials!", "checkpoint")
 
     # automations
     automation_files = get_automations("../automations/")
-    devprint("got automation files!", "checkpoint")
+    dev_print("got automation files!", "checkpoint")
 
     for automation_file in automation_files:
 
@@ -120,13 +117,17 @@ def main():
             sync_data = get_sync_data(sub_automation)
             sheet_upload_data.append(get_sheet_upload_data(sync_data, sub_automation["sheet"]))
 
-        print(automation_data)
-        if automation_data["type"] == "resource sync":
-            sync_resources(automation_data["file"], automation_data["sheet"])
-        if automation_data["type"] == "resource name":
-            sync_resources(automation_data["file"], automation_data["sheet"])
+        batch_update_values(creds, automation_data["sheet_id"], sheet_upload_data)
+
+        # print(automation_data)
+        # if automation_data["type"] == "resource sync":
+        #     sync_resources(automation_data["file"], automation_data["sheet"])
+        # if automation_data["type"] == "resource name":
+        #     sync_resources(automation_data["file"], automation_data["sheet"])
 
 
 if __name__ == "__main__":
-    start_dev_mode()
+    if "--dev" in sys.argv or "-d" in sys.argv:
+        start_dev_mode()
+
     main()

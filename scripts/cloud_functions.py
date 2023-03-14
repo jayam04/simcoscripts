@@ -7,6 +7,8 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from google.oauth2.service_account import Credentials
 
+from dev_tools import dev_print
+
 
 credentials_path = "../secrets/simcoscripts-f5d853cce669.json"
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets',
@@ -20,8 +22,8 @@ def sync_sheet(sheet_data, data, creds):
     batch_update_values(sheet_data)
 
 
-def batch_update_values(sheet_data, range_name,
-                        _values, value_input_option="USER_ENTERED"):
+def batch_update_values(creds, sheet_data, data, value_input_option="USER_ENTERED"):
+    dev_print("syncing sheet ...", "checkpoint")
     """
         Creates the batch_update the user has access to.
         Load pre-authorized user credentials from the environment.
@@ -29,25 +31,26 @@ def batch_update_values(sheet_data, range_name,
         for guides on implementing OAuth2 for the application.
             """
 
-    spreadsheet_id = sheet_data["id"],
+    spreadsheet_id = sheet_data,
 
-    creds = None
-    if os.path.exists(credentials_path):
-        creds = Credentials.from_service_account_file(
-            credentials_path, scopes=SCOPES)
-        print("got credentials!")
-    else:
-        return 1
+    # if os.path.exists(credentials_path):
+    #     creds = Credentials.from_service_account_file(
+    #         credentials_path, scopes=SCOPES)
+    #     print("got credentials!")
+    # else:
+    #     return 1
     # pylint: disable=maybe-no-member
     try:
+        dev_print(" getting service ...", "checkpoint")
         service = build('sheets', 'v4', credentials=creds)
+        print(data)
 
-        data = [
-            {
-                'range': range_name,
-                'values': _values
-            },
-        ]
+        # data = [
+        #     {
+        #         'range': range_name,
+        #         'values': _values
+        #     },
+        # ]
         body = {
             'valueInputOption': value_input_option,
             'data': data
