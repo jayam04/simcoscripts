@@ -7,7 +7,7 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from google.oauth2.service_account import Credentials
 
-from dev_tools import dev_print
+from scripts.helpers.dev_tools import dev_print
 
 
 credentials_path = "../secrets/simcoscripts-f5d853cce669.json"

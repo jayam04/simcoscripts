@@ -7,3 +7,9 @@ google-api-python-client
 
 # development
 termcolor
+
+# sim requests
+requests
+
+# helpers/helper.py
+hashlib

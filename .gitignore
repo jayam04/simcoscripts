@@ -1,5 +1,10 @@
+# python cache and envs
 .venv
-secrets
 __pycache__
+
+# ides
 .idea
 .vscode
+
+# other private folders
+secrets

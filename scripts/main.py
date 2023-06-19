@@ -7,7 +7,7 @@ from cloud_functions import batch_update_values
 
 import quantity as quantity
 import cloud_functions as cf
-from dev_tools import dev_print, start_dev_mode
+from scripts.helpers.dev_tools import dev_print, start_dev_mode
 import sys
 
 credentials_path = "../secrets/simcoscripts-dfb9b2048a6e.json"
