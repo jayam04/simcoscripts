@@ -1,7 +1,7 @@
 # simcoscripts
 
-a complete bundle of scripts that can sync your data from
-[simcompanies](https://simcompanies.com) to google sheets.  
+a complete bundle of scripts that can sync your data from [simcompanies](https://simcompanies.com) to google sheets.  
+it's successor to [syncforsimulated](https://github.com/jayam04/syncforsimulated) which focused on syncing json file to google sheet online.  
 
 ## todo
 
@@ -20,4 +20,4 @@ a complete bundle of scripts that can sync your data from
 
 ## license
 
-this project uses [GNU Public License v3](LICENSE).
+this project uses [GNU Public License v3](LICENSE).  
