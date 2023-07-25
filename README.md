@@ -1,5 +1,9 @@
 # simcoscripts
 
+<p style="color: red">
+<a style="color: red, text-decoration: None" href="https://github.com/jayam04/simcoscripts/wiki/23.07.25">NOTE: WE ARE HAVING BIG CHANGES, PLEASE CHECK BLOG WIKI FROM HERE</a><br>
+</p>
+
 a complete bundle of scripts that can sync your data from [simcompanies](https://simcompanies.com) to google sheets.  
 it's successor to [syncforsimulated](https://github.com/jayam04/syncforsimulated) which focused on syncing json file to google sheet online.  
 
