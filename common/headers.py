@@ -19,7 +19,20 @@ class Header:
     def json(self):
         return self.headers
     
-    # TODO: timestamp
-    def update_cookies(cookies):
-        pass
+    def update_timestamp(self, ts=None):
+        # TODO: No timestamp
+        self.headers["X-Ts"] = ts
+        # TODO: xport
+
+    def update_cookies(self, cookies):
+        self.headers["Cookie"] = ""
+        for cookie in cookies:
+            self.headers["Cookie"] += f"{cookie.name}={cookie.value}; "
+
+            if cookie.name == "csrftoken":
+                self.headers["X-CSRFToken"] = cookie.value
+    
     # TODO: content length
+    def update_content_length(self, content_length, content_type="application/json;charset=utf-8"):
+        self.headers["Content-Length"] = content_length
+        self.headers["Content-Type"] = content_type

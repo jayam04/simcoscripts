@@ -13,6 +13,12 @@ class Session:
         url = "https://www.simcompanies.com/api/v2/auth/email/auth/"
         request = Request(url, method="POST")
         request.headers.update_cookies(self.cookies)
+        request.headers.update_timestamp()
+        request.update_body({"email": self.user.username, "password": self.user.password})
+        response = request.send()
+        if response.ok:
+            self.cookies = response.cookies
+        return response
     
     def generate_cookies(self) -> int:
         request = Request("https://www.simcompanies.com")
