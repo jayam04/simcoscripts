@@ -4,13 +4,18 @@ from common.headers import Header
 import json
 
 class Request:
-    def __init__(self, url, body=None, headers=Header(), method="GET"):
+    def __init__(self, url, body=None, headers=None, method="GET"):
         self.url = url
         self.body = body
-        self.headers = headers
+        if headers:
+            self.headers = headers
+        else:
+            self.headers = Header()
         self.method = method
 
         # TODO: what is len body > 0, update headers.content-length, type and more
+        if body:
+            headers.update_content_length(str(len(body)))
 
     def update_body(self, body):
         self.body = json.dumps(body)

@@ -1,3 +1,8 @@
+import time
+import hashlib
+
+from helpers import dev_tools
+
 class Header:
     def __init__(self) -> None:
         self.headers = {
@@ -19,10 +24,17 @@ class Header:
     def json(self):
         return self.headers
     
-    def update_timestamp(self, ts=None):
-        # TODO: No timestamp
-        self.headers["X-Ts"] = ts
-        # TODO: xport
+    def update_timestamp(self, url=None, ts=None):
+        if ts:
+            self.headers["X-Ts"] = ts
+        else:
+            self.headers["X-Ts"] = str(int(time.time() * 1000))
+        url_without_domain = url.replace("https://www.simcompanies.com", "")
+        if url_without_domain[-1] != "/":
+            url_without_domain += "/"
+        input_data = f"{url_without_domain}{self.headers['X-Ts']}"
+        self.headers["X-Port"] = hashlib.md5(input_data.encode('utf-8')).hexdigest()
+        dev_tools.dev_print(self.headers)
 
     def update_cookies(self, cookies):
         self.headers["Cookie"] = ""
