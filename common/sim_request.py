@@ -3,6 +3,7 @@ import requests
 from common.headers import Header
 import json
 
+
 class Request:
     def __init__(self, url, body=None, headers=None, method="GET"):
         self.url = url

@@ -1,11 +1,12 @@
 from common.sim_request import Request
 
+
 class Session:
     def __init__(self, user, cookies=None):
         self.user = user
         self.cookies = cookies
 
-    def authenticate(self) -> int:
+    def authenticate(self):
         if not self.cookies:
             return 1
         if "csrftoken" not in self.cookies:
@@ -24,4 +25,4 @@ class Session:
         request = Request("https://www.simcompanies.com")
         response = request.send()
         self.cookies = response.cookies
-
+        return 0

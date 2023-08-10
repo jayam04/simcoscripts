@@ -1,16 +1,18 @@
-from common.session import Session
 from common.company import Company
 from common.sim_request import Request
-from common.headers import HEADER
 from helpers import dev_tools
 
+
 class User:
-    def __init__(self, username=None, password=None, id=None, companies=[], cookies=None):
+    def __init__(self, username=None, password=None, user_id=None, companies=None, cookies=None):
         self.username = username
         self.password = password
-        self.id = id
-        self.companies = companies
-        self.cookies = None
+        self.id = user_id
+        if companies:
+            self.companies = companies
+        else:
+            self.companies = []
+        self.cookies = cookies
         self.current_company = None
 
     def get_companies(self):
@@ -31,7 +33,7 @@ class User:
             self.companies.append(company)
         return 0
     
-    def authenticate(self) -> int:
+    def authenticate(self):
         if not self.cookies:
             return 1
         if "csrftoken" not in self.cookies:
@@ -50,12 +52,12 @@ class User:
         request = Request("https://www.simcompanies.com")
         response = request.send()
         self.cookies = response.cookies
+        return 0
 
     def get_current_company(self):
         request = Request("https://www.simcompanies.com/api/v2/companies/me/")
         request.headers.update_cookies(self.cookies)
         request.headers.update_timestamp(request.url)
         response = request.send()
-
-
-
+        print(response)
+        # TODO: set current company if successful, else return error code

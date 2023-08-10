@@ -3,6 +3,7 @@ from helpers import dev_tools
 
 from common.sim_request import Request
 
+
 class Company:
     def __init__(self, id, name, realm, user):
         self.id = id
