@@ -1,7 +1,7 @@
 from common.session import Session
 from common.company import Company
 from common.sim_request import Request
-from common.headers import Header
+from common.headers import HEADER
 from helpers import dev_tools
 
 class User:
