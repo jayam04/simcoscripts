@@ -4,7 +4,7 @@ from helpers import dev_tools
 
 
 class User:
-    def __init__(self, username=None, password=None, user_id=None, companies=None, cookies=None):
+    def __init__(self, username: str, password: str, user_id=None, companies=None, cookies=None):
         self.username = username
         self.password = password
         self.id = user_id
@@ -16,17 +16,12 @@ class User:
         self.current_company = None
 
     def get_companies(self):
-        # auth_session = Session(self)
-        # auth_session.authenticate()
-        # TODO: get companies, create Company for companies, --> set current company
-        # todo in get_id and current_company
-
         request = Request("https://www.simcompanies.com/api/v1/players/me/companies/")
-        request.headers.update_cookies(self.cookies)
-        request.headers.update_timestamp(url=request.url)
+        request.update_cookies_and_csrftoken(self.cookies)
+        request.update_timestamp_and_xport()
         response = request.send()
-        dev_tools.dev_print(response.json())
         if response.ok:
+            dev_tools.dev_print(response.json())
             response = response.json()
         for item in response:
             company = Company(item["id"], item["company"], item["realmId"], self)
@@ -34,15 +29,11 @@ class User:
         return 0
     
     def authenticate(self):
-        if not self.cookies:
-            return 1
-        if "csrftoken" not in self.cookies:
-            return 1
-        url = "https://www.simcompanies.com/api/v2/auth/email/auth/"
-        request = Request(url, method="POST")
-        # request.headers.update_cookies(self.cookies)
+        if not self.cookies or "csrftoken" not in self.cookies:
+            self.generate_cookies()
+
+        request = Request("https://www.simcompanies.com/api/v2/auth/email/auth/", method="POST")
         request.update_cookies_and_csrftoken(self.cookies)
-        # request.headers.update_timestamp(url=request.url)
         request.update_timestamp_and_xport()
         request.update_body({"email": self.username, "password": self.password})
         response = request.send()
@@ -53,13 +44,33 @@ class User:
     def generate_cookies(self) -> int:
         request = Request("https://www.simcompanies.com")
         response = request.send()
-        self.cookies = response.cookies
-        return 0
+        if response.ok:
+            self.cookies = response.cookies
+            return 0
+        dev_tools.dev_print(response, response.status_code)
+        return 1
 
-    def get_current_company(self):
+    def set_cookies(self, cookies) -> int:  # TODO: add parameter type
+        if cookies:
+            self.cookies = cookies
+            return 0
+        return 1
+
+    def get_userid_and_current_company(self):
         request = Request("https://www.simcompanies.com/api/v2/companies/me/")
-        request.headers.update_cookies(self.cookies)
-        request.headers.update_timestamp(request.url)
+        request.update_cookies_and_csrftoken(self.cookies)
+        request.update_timestamp_and_xport()
         response = request.send()
-        print(response)
-        # TODO: set current company if successful, else return error code
+        if response.ok:
+            # dev_tools.dev_print(response.json())
+            response = response.json()
+        for company in self.companies:
+            if company.id == response["authCompany"]["companyId"]:
+                self.current_company = company
+                break
+        else:
+            return 1
+        self.id = response["authUser"]["playerId"]
+        dev_tools.dev_print(self.current_company)
+
+        return 0

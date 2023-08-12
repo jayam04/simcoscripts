@@ -1,3 +1,5 @@
+import sys
+
 from common.headers import Headers, HEADER
 from helpers.dev_tools import *
 
@@ -10,13 +12,14 @@ def check_xport():
         "ts": "1691635873640",
         "url": "https://www.simcompanies.com/api/v2/companies/me/note/3035179/"
     }
-    header.update_timestamp(testcase["url"], testcase["ts"])
+    header.set_timestamp(testcase["ts"])
+    header.set_xport(testcase["url"])
 
-    if header.headers[HEADER.XPORT] != testcase["xport"]:
-        dev_print("wrong X-Port: " + header.headers["X-Port"], testcase["xport"], info_type="error")
+    if header.XPORT != testcase["xport"]:
+        dev_print(f"wrong X-Port:  + {header.XPORT}, {testcase['xport']}", info_type="error")
         return 1
     else:
-        dev_print("verified X-Port: " + header.headers["X-Port"], info_type="checkpoint")
+        dev_print(f"X-Port (verified):  {header.XPORT} for ts {header.TIMESTAMP}", info_type="checkpoint")
         return 0
 
 

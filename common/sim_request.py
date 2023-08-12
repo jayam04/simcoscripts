@@ -1,4 +1,5 @@
 import requests
+from requests import Response
 
 from common.headers import Headers
 import json
@@ -15,22 +16,24 @@ class Request:
             self.headers = Headers()
         self.method = method
 
-        # TODO: what is len body > 0, update headers.content-length, type and more
         if body:
-            headers.update_content_length(str(len(body)))
+            headers.set_content_length(len(body))
+            headers.set_content_type()
 
     def update_body(self, body: dict):
         self.body = json.dumps(body)
         self.headers.set_content_length(len(self.body))
         self.headers.set_content_type()
 
-    def send(self):  # TODO: add return type
+    def send(self) -> Response:
         if self.method == "GET":
-            print(self.headers.json())
             return requests.get(self.url, headers=self.headers.json())
         
         if self.method == "POST":
             return requests.post(self.url, data=self.body, headers=self.headers.json())
+
+        if self.method == "PATCH":
+            return requests.patch(self.url, data=self.body, headers=self.headers.json())
         
     def update_timestamp_and_xport(self, ts=None, url=None):
         if not ts:
@@ -43,3 +46,4 @@ class Request:
 
     def update_cookies_and_csrftoken(self, cookies):
         self.headers.set_cookies_and_csrftoken(cookies)
+

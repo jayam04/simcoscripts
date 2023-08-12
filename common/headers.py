@@ -20,6 +20,7 @@ class HEADER:
     TIMESTAMP = "X-Ts"
     XPORT = "X-Port"
     COOKIE = "Cookie"
+    ORIGIN = "Origin"
     XCSRFTOKEN = "X-CSRFToken"
     CONTENT_LENGTH = "Content-Length"
     CONTENT_TYPE = "Content-Type"
@@ -59,12 +60,13 @@ class Headers:
         self.XCSRFTOKEN = None
         self.CONTENT_LENGTH = None
         self.CONTENT_TYPE = None
+        self.ORIGIN = None
 
     def json_from_header(self):
         return self.headers
 
     def json(self):
-        return {
+        raw_json = {
             HEADER.HOST: self.HOST,
             HEADER.USER_AGENT: self.USER_AGENT,
             HEADER.ACCEPT: self.ACCEPT,
@@ -84,6 +86,12 @@ class Headers:
             HEADER.CONTENT_LENGTH: self.CONTENT_LENGTH,
             HEADER.CONTENT_TYPE: self.CONTENT_TYPE
         }
+
+        keys_to_delete = [key for key, value in raw_json.items() if value is None]
+        for key in keys_to_delete:
+            del raw_json[key]
+
+        return raw_json
     
     def update_timestamp(self, url=None, ts=None):
         if ts:
@@ -97,13 +105,17 @@ class Headers:
         self.headers[HEADER.XPORT] = hashlib.md5(input_data.encode('utf-8')).hexdigest()
         dev_tools.dev_print(self.headers)
 
-    def update_cookies(self, cookies):
+    def update_cookies(self, cookies) -> int:
+        if not cookies:
+            return 1
+
         self.headers[HEADER.COOKIE] = ""
         for cookie in cookies:
             self.headers[HEADER.COOKIE] += f"{cookie.name}={cookie.value}; "
 
             if cookie.name == "csrftoken":
                 self.headers[HEADER.XCSRFTOKEN] = cookie.value
+        return 0
     
     # TODO: content length
     def update_content_length(self, content_length, content_type="application/json;charset=utf-8"):
@@ -124,16 +136,23 @@ class Headers:
         input_data = f"{url_without_domain}{self.TIMESTAMP}"
         self.XPORT = hashlib.md5(input_data.encode('utf-8')).hexdigest()
 
-    def set_cookies_and_csrftoken(self, cookies):  # TODO: add cookie type
+    def set_cookies_and_csrftoken(self, cookies) -> int:  # TODO: add cookie type
+        if not cookies:
+            return 1
+
         self.COOKIE = ""
         for cookie in cookies:
             self.COOKIE += f"{cookie.name}={cookie.value}; "
 
             if cookie.name == "csrftoken":
                 self.XCSRFTOKEN = cookie.value
+        return 0
 
     def set_content_length(self, content_length: int):
         self.CONTENT_LENGTH = str(content_length)
     
     def set_content_type(self, content_type: str = "application/json;charset=utf-8"):
         self.CONTENT_TYPE = content_type
+
+    def set_origin(self,  origin: str = "https://www.simcompanies.com"):
+        self.ORIGIN = origin

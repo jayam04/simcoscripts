@@ -16,7 +16,7 @@ def install_dependencies(venv_dir, requirements_file, is_developer):
     subprocess.run([pip_path, 'install', '-r', requirements_file])
 
     if is_developer:
-        dev_requirements_file = 'helpers/requirements.dev.txt'
+        dev_requirements_file = 'requirements.dev.txt'
         if os.path.exists(dev_requirements_file):
             subprocess.run([pip_path, 'install', '-r', dev_requirements_file])
         else:
