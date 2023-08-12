@@ -25,7 +25,7 @@ class HEADER:
     CONTENT_TYPE = "Content-Type"
 
 
-class Header:
+class Headers:
     def __init__(self) -> None:
         self.headers = {
             HEADER.HOST: "www.simcompanies.com",
@@ -41,9 +41,49 @@ class Header:
             HEADER.SEC_FETCH_SITE: "same-origin",
             HEADER.CONNECTION: "keep-alive",
         }
+        self.HOST = "www.simcompanies.com"
+        self.USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; rv:109.0) Gecko/20100101 Firefox/115.0"
+        self.ACCEPT = "application/json, text/plain, */*"
+        self.ACCEPT_LANGUAGE = "en-US,en;q=0.5"
+        self.ACCEPT_ENCODING = "gzip, deflate, br"
+        self.REFERER = "https://www.simcompanies.com/"
+        self.X_TZ_OFFSET = "0"
+        self.DNT = "1"
+        self.SEC_FETCH_DEST = "empty"
+        self.SEC_FETCH_MODE = "cors"
+        self.SEC_FETCH_SITE = "same-origin"
+        self.CONNECTION = "keep-alive"
+        self.TIMESTAMP = None
+        self.XPORT = None
+        self.COOKIE = None
+        self.XCSRFTOKEN = None
+        self.CONTENT_LENGTH = None
+        self.CONTENT_TYPE = None
+
+    def json_from_header(self):
+        return self.headers
 
     def json(self):
-        return self.headers
+        return {
+            HEADER.HOST: self.HOST,
+            HEADER.USER_AGENT: self.USER_AGENT,
+            HEADER.ACCEPT: self.ACCEPT,
+            HEADER.ACCEPT_LANGUAGE: self.ACCEPT_LANGUAGE,
+            HEADER.ACCEPT_ENCODING: self.ACCEPT_ENCODING,
+            HEADER.REFERER: self.REFERER,
+            HEADER.X_TZ_OFFSET: self.X_TZ_OFFSET,
+            HEADER.DNT: self.DNT,
+            HEADER.SEC_FETCH_DEST: self.SEC_FETCH_DEST,
+            HEADER.SEC_FETCH_MODE: self.SEC_FETCH_MODE,
+            HEADER.SEC_FETCH_SITE: self.SEC_FETCH_SITE,
+            HEADER.CONNECTION: self.CONNECTION,
+            HEADER.TIMESTAMP: self.TIMESTAMP,
+            HEADER.XPORT: self.XPORT,
+            HEADER.COOKIE: self.COOKIE,
+            HEADER.XCSRFTOKEN: self.XCSRFTOKEN,
+            HEADER.CONTENT_LENGTH: self.CONTENT_LENGTH,
+            HEADER.CONTENT_TYPE: self.CONTENT_TYPE
+        }
     
     def update_timestamp(self, url=None, ts=None):
         if ts:
@@ -69,3 +109,31 @@ class Header:
     def update_content_length(self, content_length, content_type="application/json;charset=utf-8"):
         self.headers[HEADER.CONTENT_LENGTH] = content_length
         self.headers[HEADER.CONTENT_TYPE] = content_type
+
+    # new methods each for specific header
+    def set_timestamp(self, ts: int = None):
+        if not ts:
+            ts = int(time.time() * 1000)
+        self.TIMESTAMP = str(ts)
+
+    def set_xport(self, url: str):
+        url_without_domain = url.replace("https://www.simcompanies.com", "")
+        if url_without_domain[-1] != "/":
+            url_without_domain += "/"
+
+        input_data = f"{url_without_domain}{self.TIMESTAMP}"
+        self.XPORT = hashlib.md5(input_data.encode('utf-8')).hexdigest()
+
+    def set_cookies_and_csrftoken(self, cookies):  # TODO: add cookie type
+        self.COOKIE = ""
+        for cookie in cookies:
+            self.COOKIE += f"{cookie.name}={cookie.value}; "
+
+            if cookie.name == "csrftoken":
+                self.XCSRFTOKEN = cookie.value
+
+    def set_content_length(self, content_length: int):
+        self.CONTENT_LENGTH = str(content_length)
+    
+    def set_content_type(self, content_type: str = "application/json;charset=utf-8"):
+        self.CONTENT_TYPE = content_type

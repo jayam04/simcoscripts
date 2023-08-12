@@ -1,10 +1,10 @@
-from common.headers import Header, HEADER
+from common.headers import Headers, HEADER
 from helpers.dev_tools import *
 
 
 def check_xport():
     start_dev_mode()
-    header = Header()
+    header = Headers()
     testcase = {
         "xport": "af87d1b5cf287346b808081e104dc8e2",
         "ts": "1691635873640",

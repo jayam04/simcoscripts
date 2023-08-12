@@ -40,8 +40,10 @@ class User:
             return 1
         url = "https://www.simcompanies.com/api/v2/auth/email/auth/"
         request = Request(url, method="POST")
-        request.headers.update_cookies(self.cookies)
-        request.headers.update_timestamp(url=request.url)
+        # request.headers.update_cookies(self.cookies)
+        request.update_cookies_and_csrftoken(self.cookies)
+        # request.headers.update_timestamp(url=request.url)
+        request.update_timestamp_and_xport()
         request.update_body({"email": self.username, "password": self.password})
         response = request.send()
         if response.ok:

@@ -1,5 +1,4 @@
 from common import user
-from common.session import Session
 from helpers.dev_tools import *
 
 from private import simcobot
