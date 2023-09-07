@@ -17,8 +17,11 @@ class Request:
         self.method = method
 
         if body:
-            headers.set_content_length(len(body))
-            headers.set_content_type()
+            self.headers.set_content_length(len(body))
+            self.headers.set_content_type()
+
+    def __str__(self) -> str:
+        return f"{self.url} {self.body} {self.headers}"
 
     def update_body(self, body: dict):
         self.body = json.dumps(body)

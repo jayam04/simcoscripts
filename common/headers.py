@@ -64,6 +64,12 @@ class Headers:
 
     def json_from_header(self):
         return self.headers
+    
+    def __str__(self) -> str:
+        json_obj = self.json()
+        del json_obj[HEADER.COOKIE]
+        del json_obj[HEADER.XCSRFTOKEN]
+        return str(json_obj)
 
     def json(self):
         raw_json = {
