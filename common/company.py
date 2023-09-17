@@ -19,6 +19,7 @@ class Company:
         # TODO: improve this to be more readable
         return f"{self.name} ({self.id}) in realm {self.realm_id}"
 
+
     def send_message_to(self, message, recipient_id):
         body = {
             "companyId": recipient_id,

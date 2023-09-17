@@ -71,6 +71,7 @@ class Headers:
         del json_obj[HEADER.XCSRFTOKEN]
         return str(json_obj)
 
+
     def json(self):
         raw_json = {
             HEADER.HOST: self.HOST,

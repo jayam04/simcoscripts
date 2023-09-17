@@ -23,6 +23,7 @@ class Request:
     def __str__(self) -> str:
         return f"{self.url} {self.body} {self.headers}"
 
+
     def update_body(self, body: dict):
         self.body = json.dumps(body)
         self.headers.set_content_length(len(self.body))

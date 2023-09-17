@@ -4,6 +4,7 @@ from helpers import dev_tools
 from helpers.helper import copy_cookies
 
 
+
 class User:
     def __init__(self, username: str, password: str, user_id=None, companies=None, cookies=None):
         self.username = username
@@ -29,6 +30,7 @@ class User:
             company = Company(item["id"], item["company"], item["realmId"], self)
             self.companies.append(company)
             dev_tools.dev_print(f"Created company: {company}")
+
         return 0
     
     def authenticate(self):
@@ -43,6 +45,7 @@ class User:
         if response.ok:
             for cookie in response.cookies:
                 self.cookies.set_cookie(cookie)
+
         return response
     
     def generate_cookies(self) -> int:
@@ -77,9 +80,11 @@ class User:
             if company.id == response["authCompany"]["companyId"]:
                 self.current_company = company
                 dev_tools.dev_print(f"Current company: {self.current_company}")
+
                 break
         else:
             return 1
         self.id = response["authUser"]["playerId"]
+
 
         return 0
